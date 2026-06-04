@@ -6,3 +6,4 @@ media/
 .vscode/
 venv/
 .env
+.flake8
