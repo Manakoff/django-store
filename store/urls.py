@@ -13,6 +13,7 @@ urlpatterns = [
     path("users/", include("users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     path("orders/", include("orders.urls", namespace="orders")),
+    path("api/", include("api.urls", namespace="api")),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:

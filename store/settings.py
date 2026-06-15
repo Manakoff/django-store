@@ -72,10 +72,12 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.github",
     "django_extensions",
     "debug_toolbar",
+    "rest_framework",
 
     "products",
     "users",
     "orders",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -241,3 +243,10 @@ CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/1"
 
 YOOKASSA_SHOP_ID = env('YOOKASSA_SHOP_ID')
 YOOKASSA_SECRET_KEY = env('YOOKASSA_SECRET_KEY')
+
+# Django REST
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 3,
+}
