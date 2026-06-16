@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "debug_toolbar",
     "rest_framework",
+    "rest_framework.authtoken",
 
     "products",
     "users",
@@ -249,4 +250,7 @@ YOOKASSA_SECRET_KEY = env('YOOKASSA_SECRET_KEY')
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 3,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }

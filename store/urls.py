@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework.authtoken import views
 
 from products.views import IndexView
 
@@ -14,6 +15,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("orders/", include("orders.urls", namespace="orders")),
     path("api/", include("api.urls", namespace="api")),
+    path('api-token-auth/', views.obtain_auth_token)
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
