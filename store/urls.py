@@ -15,7 +15,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("orders/", include("orders.urls", namespace="orders")),
     path("api/", include("api.urls", namespace="api")),
-    path('api-token-auth/', views.obtain_auth_token)
+    path("api-token-auth/", views.obtain_auth_token),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:

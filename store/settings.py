@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import os
 from pathlib import Path
 
 import environ
@@ -36,7 +35,6 @@ env = environ.Env(
     EMAIL_USE_SSL=(bool),
     YOOKASSA_SHOP_ID=(str),
     YOOKASSA_SECRET_KEY=(str),
-
 )
 
 environ.Env.read_env(BASE_DIR / ".env")
@@ -65,7 +63,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.humanize",
-
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -74,7 +71,6 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "rest_framework",
     "rest_framework.authtoken",
-
     "products",
     "users",
     "orders",
@@ -123,7 +119,7 @@ INTERNAL_IPS = [
 REDIS_HOST = env("REDIS_HOST")
 REDIS_PORT = env("REDIS_PORT")
 
-#Caches
+# Caches
 
 CACHES = {
     "default": {
@@ -131,7 +127,7 @@ CACHES = {
         "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        },
     }
 }
 
@@ -213,10 +209,10 @@ else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = env("EMAIL_HOST")
     EMAIL_PORT = env("EMAIL_PORT")
-    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-    EMAIL_USE_SSL = env('EMAIL_USE_SSL')
-    DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
+    EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+    EMAIL_USE_SSL = env("EMAIL_USE_SSL")
+    DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER")
 
 # OAuth
 
@@ -242,15 +238,15 @@ CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/1"
 
 # Yookassa
 
-YOOKASSA_SHOP_ID = env('YOOKASSA_SHOP_ID')
-YOOKASSA_SECRET_KEY = env('YOOKASSA_SECRET_KEY')
+YOOKASSA_SHOP_ID = env("YOOKASSA_SHOP_ID")
+YOOKASSA_SECRET_KEY = env("YOOKASSA_SECRET_KEY")
 
 # Django REST
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 3,
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 3,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
 }

@@ -28,10 +28,10 @@ class ProductsListView(TitleMixin, ListView):
         context = super(ProductsListView, self).get_context_data()
         categories = cache.get("categories")
         if not categories:
-            context['categories'] = ProductCategory.objects.all()
-            cache.set("categories", context['categories'], 30)
+            context["categories"] = ProductCategory.objects.all()
+            cache.set("categories", context["categories"], 30)
         else:
-            context['categories'] = categories
+            context["categories"] = categories
         return context
 
 

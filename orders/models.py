@@ -16,7 +16,7 @@ class Order(models.Model):
         (PAID, "Оплачен"),
         (ON_WAY, "В пути"),
         (DELIVERED, "Доставлен"),
-        (CANCELED, "Отменён")
+        (CANCELED, "Отменён"),
     )
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
@@ -29,7 +29,7 @@ class Order(models.Model):
     payment_id = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return f'Order #{self.id} - {self.first_name} {self.last_name}'
+        return f"Order #{self.id} - {self.first_name} {self.last_name}"
 
     def update_after_payment(self):
         baskets = Basket.objects.filter(user=self.initiator)
@@ -41,8 +41,8 @@ class Order(models.Model):
                 product.quantity = 0
             product.save()
         self.basket_history = {
-            'purchased_items': [basket.de_json() for basket in baskets],
-            'total_sum': float(baskets.total_sum()),
+            "purchased_items": [basket.de_json() for basket in baskets],
+            "total_sum": float(baskets.total_sum()),
         }
         baskets.delete()
         self.save()

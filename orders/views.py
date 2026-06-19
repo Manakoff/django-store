@@ -24,14 +24,14 @@ Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
 
 class SuccessTemplateView(TitleMixin, TemplateView):
     template_name = "orders/success.html"
-    title = 'Store - Спасибо за заказ!'
+    title = "Store - Спасибо за заказ!"
 
 
 class OrderListView(ListView):
-    template_name = 'orders/orders.html'
-    title = 'Store - Заказы'
+    template_name = "orders/orders.html"
+    title = "Store - Заказы"
     queryset = Order.objects.all()
-    ordering = ('-created')
+    ordering = "-created"
 
     def get_queryset(self):
         queryset = super(OrderListView, self).get_queryset()
@@ -39,20 +39,20 @@ class OrderListView(ListView):
 
 
 class OrderDetailView(DetailView):
-    template_name = 'orders/order.html'
+    template_name = "orders/order.html"
     model = Order
 
     def get_context_data(self, **kwargs):
         context = super(OrderDetailView, self).get_context_data(**kwargs)
-        context['title'] = f'Store - Заказ №{self.object.id}'
+        context["title"] = f"Store - Заказ №{self.object.id}"
         return context
 
 
 class OrderCreateView(TitleMixin, CreateView):
     template_name = "orders/order_create.html"
     form_class = OrderForm
-    success_url = reverse_lazy('orders:order_create')
-    title = 'Store - Оформление заказа'
+    success_url = reverse_lazy("orders:order_create")
+    title = "Store - Оформление заказа"
 
     def form_valid(self, form):
 
@@ -63,77 +63,81 @@ class OrderCreateView(TitleMixin, CreateView):
 
         order = form.save()
 
-        description = f"Оплата товаров в магазине Store для {self.request.user.username}"
-        payment = Payment.create({
-            "amount": {
-                "value": str(total_price),
-                "currency": "RUB"
+        description = (
+            f"Оплата товаров в магазине Store для {self.request.user.username}"
+        )
+        payment = Payment.create(
+            {
+                "amount": {"value": str(total_price), "currency": "RUB"},
+                "confirmation": {
+                    "type": "redirect",
+                    "return_url": self.request.build_absolute_uri(
+                        reverse("orders:order_payment_check")
+                    ),
+                },
+                "capture": True,
+                "description": description,
             },
-            "confirmation": {
-                "type": "redirect",
-                "return_url": self.request.build_absolute_uri(reverse('orders:order_payment_check'))
-            },
-            "capture": True,
-            "description": description,
-        }, uuid.uuid4())
+            uuid.uuid4(),
+        )
 
         order.payment_id = payment.id
         order.save()
 
-        self.request.session['current_payment_id'] = payment.id
+        self.request.session["current_payment_id"] = payment.id
 
         return HttpResponseRedirect(payment.confirmation.confirmation_url)
 
 
 class OrderPaymentCheckView(View):
     def get(self, request, *args, **kwargs):
-        payment_id = request.session.get('current_payment_id')
+        payment_id = request.session.get("current_payment_id")
 
         if not payment_id:
-            return redirect('orders:order_create')
+            return redirect("orders:order_create")
 
         try:
             payment_info = Payment.find_one(payment_id)
             order = Order.objects.get(payment_id=payment_id)
 
-            if payment_info.status in ['succeeded', 'pending']:
+            if payment_info.status in ["succeeded", "pending"]:
                 complete_order_payment_task.delay(order.id)
-                return redirect('orders:order_success')
+                return redirect("orders:order_success")
 
-            elif payment_info.status == 'canceled':
+            elif payment_info.status == "canceled":
                 order.status = Order.CANCELED
                 order.save()
 
-                return redirect('orders:order_create')
+                return redirect("orders:order_create")
 
-            elif payment_info.status == 'pending':
+            elif payment_info.status == "pending":
                 order.update_after_payment()
-                return redirect('orders:order_success')
+                return redirect("orders:order_success")
 
         except Exception:
-            return redirect('orders:order_create')
+            return redirect("orders:order_create")
 
-        return redirect('orders:order_create')
+        return redirect("orders:order_create")
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name="dispatch")
 class YookassaWebhookView(View):
     def post(self, request, *args, **kwargs):
         try:
 
-            event_data = json.loads(request.body.decode('utf-8'))
+            event_data = json.loads(request.body.decode("utf-8"))
 
-            if event_data.get('event') == 'payment.succeeded':
-                payment_object = event_data.get('object', {})
-                payment_id = payment_object.get('id')
+            if event_data.get("event") == "payment.succeeded":
+                payment_object = event_data.get("object", {})
+                payment_id = payment_object.get("id")
 
                 order = Order.objects.get(payment_id=payment_id)
 
                 complete_order_payment_task.delay(order.id)
 
-            elif event_data.get('event') == 'payment.canceled':
-                payment_object = event_data.get('object', {})
-                payment_id = payment_object.get('id')
+            elif event_data.get("event") == "payment.canceled":
+                payment_object = event_data.get("object", {})
+                payment_id = payment_object.get("id")
 
                 order = Order.objects.get(payment_id=payment_id)
                 if order.status != Order.PAID:

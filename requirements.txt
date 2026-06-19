@@ -17,3 +17,4 @@ flake8==7.3.0
 isort==8.0.1
 
 psycopg2-binary==2.9.12
+djangorestframework==3.17.1
